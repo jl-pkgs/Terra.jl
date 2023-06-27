@@ -14,6 +14,7 @@ using Reexport
 
 # include("rast.jl")
 include("apply.jl")
+include("tools.jl")
 
 
 rast = Raster;
@@ -21,6 +22,7 @@ brick = RasterStack;
 
 
 export rast, brick, 
-  apply
+  rast_apply, 
+  set_names
 
 end # module

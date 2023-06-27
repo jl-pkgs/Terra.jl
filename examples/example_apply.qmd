@@ -1,0 +1,82 @@
+```{julia}
+using nctools
+using Ipaper
+using Terra
+```
+
+```{julia}
+range = [70, 140, 15, 55]
+cellsize = 1.0
+
+lon = range[1]+cellsize/2:cellsize:range[2]
+lat = range[3]+cellsize/2:cellsize:range[4]
+dates = make_date(2010):Day(1):make_date(2013, 12, 31)
+
+# years = year.(dates)
+ntime = length(dates)
+
+data = rand(length(lon), length(lat), ntime)
+dims = X(lon), Y(lat), Ti(dates)
+
+ra = rast(data, dims)
+
+probs = [0.05, 0.95]
+dims_new = Dim{:prob}(probs)
+
+res = rast_apply(ra, 3; by=date_year(dates), fun=NanQuantile, combine=true,
+  probs, dims_new, name="quantile")
+```
+
+## 0.1. 版本1: Ipaper
+
+```{julia}
+res = Ipaper.apply(data, 3; by=date_year(dates), fun=NanQuantile, combine=true, probs=[0.05, 0.95])
+obj_size(res)
+```
+
+## 0.2. 版本2: rast
+> dimension信息终身携带
+
+```{julia}
+# Terra.apply(ra, 3; by=year.(dates),fun=mean)
+r_i = apply(ra, 3; fun=mean)
+r_t = rast_apply(ra, 3; fun=mean)
+
+r2 = rast_apply(ra, 3; by=date_year(dates), fun=mean)
+```
+
+```{julia}
+probs = [0.05, 0.95]
+dims_new = Dim{:prob}(probs)
+
+res = rast_apply(ra, 3; by=date_year(dates), fun=NanQuantile, combine=true, 
+  probs, dims_new, name="quantile")
+
+obj_size(res.data)
+# write("a.nc", res, force=true)
+```
+
+# 1. 结果检查
+
+```{julia}
+pr = rebuild(r2, name=:pr)
+tem = rebuild(r2, name=:tem)
+
+f = "temp.nc"
+write(f, pr, force=true)
+write(f, tem, append=true)
+nc_info(f)
+```
+
+### 1.0.1. R语言
+
+```{julia}
+r = rast("temp.nc", name=:pr)
+```
+
+```{r}
+library(terra)
+f = "temp.nc"
+rast(f)
+```
+
