@@ -2,15 +2,25 @@
 module Terra
 
 
-using NCDatasets
-using DimensionalData
-using Rasters
+# using NCDatasets
+# using DimensionalData
+# 
+# const NCD = NCDatasets
+# const DD = DimensionalData
+using DocStringExtensions: TYPEDSIGNATURES, METHODLIST
 
-const NCD = NCDatasets
-const DD = DimensionalData
+using Reexport
+@reexport using Rasters
+
+# include("rast.jl")
+include("apply.jl")
 
 
-include("Rasters.jl")
+rast = Raster;
+brick = RasterStack;
 
+
+export rast, brick, 
+  apply
 
 end # module
