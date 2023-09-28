@@ -43,14 +43,16 @@ function nband(f)
   end
 end
 
+nraster = nband
+nlyr = nband
+
+
 # function nlayer(f)
 #   AG.read(f) do ds
 #     AG.nlayer(ds)
 #   end
 # end
 
-nratser = nband
-nlyr = nband
 # function nband(file::AbstractString)
 #     # ArchGDAL.unsafe_read(file) do ds
 #     ArchGDAL.read(file) do ds

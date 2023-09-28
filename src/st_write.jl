@@ -25,28 +25,33 @@ function cast_to_gdal(A::AbstractArray{<:Real})
 end
 
 
+const OPTIONS_DEFAULT_TIFF = Dict(
+  # "BIGTIFF" => "YES"
+  # "TILED" => "YES", # not work
+  "COMPRESS" => "DEFLATE"
+)
+
 function st_write(ra::AbstractRaster, f::AbstractString;
-  force=true,
-  options=String[], NUM_THREADS=4, BIGTIFF=true, kw...)
+  options=Dict{String,String}(), NUM_THREADS=4, BIGTIFF=true,
+  force=true, kw...)
 
   driver = AG.extensiondriver(f)
-
-  if (driver == "GTiff")
-    options = [options..., "COMPRESS=DEFLATE", "TILED=YES", "NUM_THREADS=$NUM_THREADS"]
-    BIGTIFF && (options = [options..., "BIGTIFF=YES"])
-    # TODO: translate into dict
+  if (driver in ["COG", "GTiff"])
+    # options = [options..., "COMPRESS=DEFLATE", "TILED=YES", "NUM_THREADS=$NUM_THREADS"]
+    # BIGTIFF && (options = [options..., "BIGTIFF=YES"])
+    options = merge(OPTIONS_DEFAULT_TIFF, options)
+    options["NUM_THREADS"] = "$NUM_THREADS"
+    BIGTIFF && (options["BIGTIFF"] = "YES")
   end
 
   dtype = nonmissingtype(eltype(ra.data))
-
   try
     convert(ArchGDAL.GDALDataType, dtype)
     nothing
   catch
     ra = rebuild(ra, data=cast_to_gdal(ra.data))
   end
-
-  write(f, ra; force, kw...)
+  write(f, ra; force, options, kw...)
 end
 
 
