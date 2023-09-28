@@ -5,3 +5,4 @@ using Terra
 # println(pwd())
 # cd(dirname(@__FILE__)) do
 include("test-apply.jl")
+include("test-bbox.jl")

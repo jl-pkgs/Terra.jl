@@ -18,4 +18,19 @@ function st_bbox(ra::Raster)
 end
 
 
+function st_bbox(f::String)
+  gdalinfo(f)["bbox"]
+end
+
+
+# get large bbox, also know as bbox_merge
+function st_bbox(bs::Vector{bbox})
+  bboxs = bbox2vec.(bs)
+  bbox_mat = cat(bboxs..., dims=2)
+  b = [minimum(bbox_mat[1:2, :], dims=2)..., maximum(bbox_mat[3:4, :], dims=2)...]
+  bbox(b...)
+end
+
+
+
 export st_bbox

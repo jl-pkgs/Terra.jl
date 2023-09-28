@@ -8,6 +8,9 @@
 
 # Examples
 ```julia
+using Dates
+make_date = DateTime
+
 dates = make_date(2010, 1, 1):Day(1):make_date(2010, 12, 31)
 yms = format.(dates, "yyyy-mm")
 
