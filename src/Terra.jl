@@ -1,7 +1,6 @@
 
 module Terra
 
-
 # using NCDatasets
 # using DimensionalData
 # 
@@ -12,13 +11,19 @@ using DocStringExtensions: TYPEDSIGNATURES, METHODLIST
 using Reexport
 @reexport using Rasters
 
+rast = Raster
+brick = RasterStack
+
+
+include("DataType/bbox.jl")
+include("Raster.jl")
+
+
+
 # include("rast.jl")
 include("apply.jl")
 include("tools.jl")
 
-
-rast = Raster;
-brick = RasterStack;
 
 
 export rast, brick, 

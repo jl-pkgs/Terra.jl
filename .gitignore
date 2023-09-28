@@ -41,3 +41,6 @@ gdal/
 *.nc
 
 */*/deprecated
+
+.ipynb_checkpoints
+*.ipynb
