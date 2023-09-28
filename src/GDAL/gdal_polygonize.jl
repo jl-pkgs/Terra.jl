@@ -1,3 +1,29 @@
+# const drivers = AG.listdrivers()
+const shortnames = Dict(
+  (".tif", ".tiff") => "GTiff",
+  (".nc", ".nc4") => "netCDF",
+  (".img",) => "HFA",
+  (".xyz",) => "XYZ",
+  (".shp",) => "ESRI Shapefile",
+  (".geojson",) => "GeoJSON",
+  (".fgb",) => "FlatGeobuf",
+  (".gdb",) => "OpenFileGDB",
+  (".gml",) => "GML",
+  (".gpkg",) => "GPKG"
+)
+
+## corresponding functions
+function find_shortname(fn::AbstractString)
+  _, ext = splitext(fn)
+  for (k, v) in shortnames
+    if ext in k
+      return v
+    end
+  end
+  error("Cannot determine GDAL Driver for $fn")
+end
+
+
 # file = "clusterIds_temporal-(perc_50%,1980-2015).tif"
 """
   $(TYPEDSIGNATURES)

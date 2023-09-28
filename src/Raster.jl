@@ -24,8 +24,11 @@ end
 
 
 # only for 2d and 3d array
-function Raster(A::AbstractArray, b::bbox; reverse_lat=true, date=nothing, kw...)
-  dims = guess_dims(A, b; date, reverse_lat)
-  Raster(A, dims; kw...)
-end
+# 默认不要missingval
+function Raster(A::AbstractArray, b::bbox; 
+  reverse_lat=true, date=nothing, 
+  missingval=nothing, kw...)
 
+  dims = guess_dims(A, b; date, reverse_lat)
+  Raster(A, dims; missingval, kw...)
+end

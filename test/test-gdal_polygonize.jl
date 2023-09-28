@@ -1,5 +1,9 @@
-using Random
 import GeoDataFrames as GDF
+using Random
+using Test
+using ArchGDAL
+
+
 
 @testset "gdal_polygonize" begin
   Random.seed!(1)
@@ -10,11 +14,12 @@ import GeoDataFrames as GDF
 
   A[1] = 0
   ra = rast(A, b)
-  ra.A
+  # ra.A
 
   f = "test_nodata.tif"
+  st_write(ra, f)
   # st_write(ra, f; nodata=0);
-  st_write(ra, f) # both works
+  # st_write(ra, f) # both works
 
   # gdal_info(f)
   gdal_polygonize(f, "out.shp", mask=true, diag=false)

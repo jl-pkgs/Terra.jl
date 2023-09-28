@@ -20,6 +20,7 @@ include("Raster.jl")
 
 include("GDAL/GDAL.jl")
 
+include("st_write.jl")
 
 # include("rast.jl")
 include("apply.jl")
