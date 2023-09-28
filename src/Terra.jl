@@ -18,6 +18,7 @@ brick = RasterStack
 include("DataType/bbox.jl")
 include("Raster.jl")
 
+include("GDAL/GDAL.jl")
 
 
 # include("rast.jl")
