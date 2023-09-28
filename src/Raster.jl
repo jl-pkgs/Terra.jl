@@ -22,7 +22,6 @@ function guess_dims(A::AbstractArray{T,3}, b::bbox;
 end
 
 
-
 # only for 2d and 3d array
 # 默认不要missingval
 function Raster(A::AbstractArray, b::bbox; 

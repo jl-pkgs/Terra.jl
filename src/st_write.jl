@@ -27,7 +27,7 @@ end
 
 const OPTIONS_DEFAULT_TIFF = Dict(
   # "BIGTIFF" => "YES"
-  # "TILED" => "YES", # not work
+  "TILED" => "YES", # not work
   "COMPRESS" => "DEFLATE"
 )
 
@@ -35,7 +35,9 @@ function st_write(ra::AbstractRaster, f::AbstractString;
   options=Dict{String,String}(), NUM_THREADS=4, BIGTIFF=true,
   force=true, kw...)
 
-  driver = AG.extensiondriver(f)
+  driver = find_shortname(f)
+  # driver = AG.extensiondriver(f)
+
   if (driver in ["COG", "GTiff"])
     # options = [options..., "COMPRESS=DEFLATE", "TILED=YES", "NUM_THREADS=$NUM_THREADS"]
     # BIGTIFF && (options = [options..., "BIGTIFF=YES"])
@@ -51,7 +53,7 @@ function st_write(ra::AbstractRaster, f::AbstractString;
   catch
     ra = rebuild(ra, data=cast_to_gdal(ra.data))
   end
-  write(f, ra; force, options, kw...)
+  write(f, ra; force, options, driver, kw...)
 end
 
 

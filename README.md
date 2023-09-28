@@ -7,11 +7,9 @@
 
 > Dongdong Kong
 
-This package is dependent on `Rasters.jl`, most geospatial processing function are imported from there.
+This package is dependent on `Rasters.jl`, geospatial processing function are imported from there.
 
-This package is only for my peasonal researches without warranty. Julia beginner, please do not use package.
-
-> 个人研究中用到的一些空间数据处理函数。
+This package is only for my peasonal researches without warranty. *<u>Please do not use this package. On your own risks.</u>*
 
 # Functions
 
@@ -27,3 +25,9 @@ This package is only for my peasonal researches without warranty. Julia beginner
 using Pkg
 Pkg.add(url = "https://github.com/jl-spatial/Terra.jl")
 ```
+
+# Acknowledgement
+
+- `Rasters.jl`
+
+- `GeoArrays.jl`

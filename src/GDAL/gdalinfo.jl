@@ -23,8 +23,8 @@ height(band) = GDAL.gdalgetrasterbandysize(band)
 function gdalinfo(file::AbstractString)
   # ds = ArchGDAL.read(file)
   # band = ArchGDAL.getband(ds, 1)
+  # nband = nband(file)
   ds = gdal_open(file)
-
   gt = getgeotransform(ds)
 
   w, h = width(ds), height(ds)
