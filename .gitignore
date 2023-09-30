@@ -45,3 +45,6 @@ OUTPUT/
 .ipynb_checkpoints
 # *.ipynb
 sf
+
+# scripts
+datacube*
