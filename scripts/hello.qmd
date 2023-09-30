@@ -1,0 +1,22 @@
+```{julia}
+using Terra
+f = "data/MOD13A2_Henan_2015_2020_10km.tif"
+r = rast(f; missingval=0.0f0)
+r[r .== 0.0f0] .= NaN32;
+```
+
+```{julia}
+using NaNStatistics
+mask = nanmean(r.data, dims=3)
+
+```
+
+```{julia}
+r[1:10, 1:10, :]
+```
+
+```{julia}
+using Plots
+
+plot(r)
+```

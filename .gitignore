@@ -43,4 +43,5 @@ OUTPUT/
 */*/deprecated
 
 .ipynb_checkpoints
-*.ipynb
+# *.ipynb
+sf

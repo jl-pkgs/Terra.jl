@@ -13,11 +13,20 @@ This package is only for my peasonal researches without warranty. *<u>Please do 
 
 # Functions
 
-1. 引入`bbox`，借鉴`GeoArrays.jl`定义Raster的方式，`Raster`重命名为`rast`为了与R语言`terra`保持一致，定义`rast`更加便捷；
+- [x] 引入`bbox`，借鉴`GeoArrays.jl`定义Raster的方式，`Raster`重命名为`rast`为了与R语言`terra`保持一致，定义`rast`更加便捷；
 
-2. 添加`apply`函数，与R语言`apply`函数操作方法一致；
+- [x] 添加`apply`函数，与R语言`apply`函数操作方法一致；
 
-3. 一些GDAL的功能，如`gdal_info`，`gdal_polygonize`。
+- [x] 一些GDAL的功能，如`gdal_info`，`gdal_polygonize`。
+
+- [ ] 核对绘图模块
+
+- [ ] zarr for MODIS global dataset
+
+- [ ] 设计一个`tiff/nc` to zarr的框架，zarr添加`bbox`信息
+
+- [ ] 全球并行计算的框架
+
 
 # Installation
 
@@ -31,3 +40,12 @@ Pkg.add(url = "https://github.com/jl-spatial/Terra.jl")
 - `Rasters.jl`
 
 - `GeoArrays.jl`
+
+
+# Roadmaps
+
+- `YAXArrays.jl`: <https://juliadatacubes.github.io/YAXArrays.jl/dev/>
+
+- `Dagger.jl`: <https://github.com/JuliaParallel/Dagger.jl>
+
+- `Zarr.jl`: <https://github.com/JuliaIO/Zarr.jl>

@@ -15,7 +15,7 @@ rast = Raster
 brick = RasterStack
 
 
-include("DataType/bbox.jl")
+include("st_bbox.jl")
 include("Raster.jl")
 
 include("GDAL/GDAL.jl")
