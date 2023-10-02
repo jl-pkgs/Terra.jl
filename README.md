@@ -11,6 +11,8 @@ This package is dependent on `Rasters.jl`, geospatial processing function are im
 
 This package is only for my peasonal researches without warranty. *<u>Please do not use this package. On your own risks.</u>*
 
+This package is backend tooks for my GEE whittaker smoothing algorithm for global MODIS Terra LAI reconstruction.
+
 # Functions
 
 - [x] 引入`bbox`，借鉴`GeoArrays.jl`定义Raster的方式，`Raster`重命名为`rast`为了与R语言`terra`保持一致，定义`rast`更加便捷；
