@@ -19,8 +19,9 @@ end
 function bbox2dims(b::bbox; cellsize=1 / 240, reverse_lat=true)
   length(cellsize) == 1 && (cellsize = [1, 1] .* cellsize)
 
-  lon = b.xmin+cellsize/2:cellsize:b.xmax
-  lat = b.ymin+cellsize/2:cellsize:b.ymax
+  cellx, celly = cellsize
+  lon = b.xmin+cellx/2:cellx:b.xmax
+  lat = b.ymin+celly/2:celly:b.ymax
   reverse_lat && (lat = reverse(lat))
   lon, lat
 end
