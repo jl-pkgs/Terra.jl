@@ -48,3 +48,6 @@ sf
 
 # scripts
 datacube*
+
+*.js
+*debug*

@@ -1,15 +1,10 @@
 function guess_dims(A::AbstractMatrix, b::bbox; reverse_lat=true, ignore...)
-  range = bbox2range(b)
-
-  nlon, nlat = size(A)[1:2]
-  cellx = (range[2] - range[1]) / nlon
-  celly = (range[4] - range[3]) / nlat
-  lon = range[1]+cellx/2:cellx:range[2]
-  lat = range[3]+celly/2:celly:range[4]
-
-  reverse_lat && (lat = reverse(lat))
+  # range = bbox2range(b)
+  cellsize = bbox2cellsize(b, size(A))
+  lon, lat = bbox2dims(b; cellsize, reverse_lat)
   X(lon), Y(lat)
 end
+
 
 function guess_dims(A::AbstractArray{T,3}, b::bbox;
   reverse_lat=true, date=nothing, ignore...) where {T}

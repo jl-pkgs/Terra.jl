@@ -17,6 +17,8 @@ end
 
 
 function bbox2dims(b::bbox; cellsize=1 / 240, reverse_lat=true)
+  length(cellsize) == 1 && (cellsize = [1, 1] .* cellsize)
+
   lon = b.xmin+cellsize/2:cellsize:b.xmax
   lat = b.ymin+cellsize/2:cellsize:b.ymax
   reverse_lat && (lat = reverse(lat))
@@ -25,8 +27,19 @@ end
 
 
 function bbox2ndim(b; cellsize=1 / 240)
+  length(cellsize) == 1 && (cellsize = [1, 1] .* cellsize)
   x, y = bbox2dims(b; cellsize)
   length(x), length(y)
+end
+
+
+# size: array size
+function bbox2cellsize(b::bbox, size)
+  range = bbox2range(b)
+  nlon, nlat = size[1:2]
+  cellx = (range[2] - range[1]) / nlon
+  celly = (range[4] - range[3]) / nlat
+  cellx, celly
 end
 
 
@@ -61,6 +74,7 @@ function st_bbox(bs::Vector{bbox})
 end
 
 
+
 function bbox_overlap(b::bbox, box::bbox; cellsize=1 / 240, reverse_lat=true)
   lon, lat = bbox2dims(b; cellsize, reverse_lat)
   Lon, Lat = bbox2dims(box; cellsize, reverse_lat)
@@ -77,6 +91,8 @@ function bbox_overlap(b::bbox, box::bbox; cellsize=1 / 240, reverse_lat=true)
 end
 
 
+# function st_mosaic()
+# end
 
 
 ## add support for Rasters
@@ -92,6 +108,7 @@ end
 
 
 export bbox,
+  bbox2cellsize,
   bbox2range, bbox2vec,
   bbox2dims, bbox2ndim,
   bbox_overlap
