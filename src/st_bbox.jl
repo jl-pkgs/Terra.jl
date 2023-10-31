@@ -15,8 +15,20 @@ Base.@kwdef struct bbox
 end
 
 
+# size: array size
+function bbox2cellsize(b::bbox, size)
+  nlon, nlat = size[1:2]
+  cellx = (b.xmax - b.xmin) / nlon
+  celly = (b.ymax - b.ymin) / nlat
+  cellx, celly
+end
 
-function bbox2dims(b::bbox; cellsize=1 / 240, reverse_lat=true)
+# 两个至少提供一个
+function bbox2dims(b::bbox; size=nothing, cellsize=nothing, reverse_lat=true)
+  if size !== nothing && cellsize === nothing
+    cellsize = bbox2cellsize(b, size)
+  end
+  
   length(cellsize) == 1 && (cellsize = [1, 1] .* cellsize)
 
   cellx, celly = abs.(cellsize)
@@ -28,19 +40,9 @@ function bbox2dims(b::bbox; cellsize=1 / 240, reverse_lat=true)
 end
 
 
-function bbox2ndim(b; cellsize=1 / 240)
-  length(cellsize) == 1 && (cellsize = [1, 1] .* cellsize)
-  x, y = bbox2dims(b; cellsize)
+function bbox2ndim(b; size=nothing, cellsize=nothing, )
+  x, y = bbox2dims(b; size, cellsize)
   length(x), length(y)
-end
-
-
-# size: array size
-function bbox2cellsize(b::bbox, size)
-  nlon, nlat = size[1:2]
-  cellx = (b.xmax - b.xmin) / nlon
-  celly = (b.ymax - b.ymin) / nlat
-  cellx, celly
 end
 
 
@@ -69,9 +71,9 @@ end
 
 
 
-function bbox_overlap(b::bbox, box::bbox; cellsize=1 / 240, reverse_lat=true)
-  lon, lat = bbox2dims(b; cellsize, reverse_lat)
-  Lon, Lat = bbox2dims(box; cellsize, reverse_lat)
+function bbox_overlap(b::bbox, box::bbox; size=nothing, cellsize=nothing, reverse_lat=true)
+  lon, lat = bbox2dims(b; size, cellsize, reverse_lat)
+  Lon, Lat = bbox2dims(box; size, cellsize, reverse_lat)
 
   ilon = findall(b.xmin .< Lon .< b.xmax)
   ilat = findall(b.ymin .< Lat .< b.ymax)
