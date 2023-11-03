@@ -23,11 +23,11 @@ This package is backend tooks for my GEE whittaker smoothing algorithm for globa
 
 - [ ] 核对绘图模块
 
-- [ ] zarr for MODIS global dataset
+- [x] zarr for MODIS global dataset
 
-- [ ] 设计一个`tiff/nc` to zarr的框架，zarr添加`bbox`信息
+- [x] 设计一个`tiff/nc` to zarr的框架，zarr添加`bbox`信息
 
-- [ ] 全球并行计算的框架
+- [x] 全球并行计算的框架
 
 
 # Installation
@@ -43,11 +43,11 @@ Pkg.add(url = "https://github.com/jl-pkgs/Terra.jl")
 
 - `GeoArrays.jl`
 
+- `YAXArrays.jl`: <https://juliadatacubes.github.io/YAXArrays.jl/dev/>
+
+- `Zarr.jl`: <https://github.com/JuliaIO/Zarr.jl>
 
 # Roadmaps
 
-- `YAXArrays.jl`: <https://juliadatacubes.github.io/YAXArrays.jl/dev/>
-
 - `Dagger.jl`: <https://github.com/JuliaParallel/Dagger.jl>
 
-- `Zarr.jl`: <https://github.com/JuliaIO/Zarr.jl>

@@ -7,6 +7,7 @@ module Terra
 # const DD = DimensionalData
 using DocStringExtensions: TYPEDSIGNATURES, METHODLIST
 
+using Zarr
 using Reexport
 @reexport using Rasters
 
@@ -23,6 +24,8 @@ include("st_extract.jl")
 include("st_mosaic.jl")
 include("st_resample.jl")
 include("st_write.jl")
+
+include("MFDataset/MFDataset.jl")
 
 # include("rast.jl")
 include("apply.jl")
