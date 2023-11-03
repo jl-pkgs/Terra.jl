@@ -21,6 +21,7 @@ function st_mosaic(ras::Vector{<:Raster}; missingval=NaN, crs=EPSG(4326), kw...)
   nd >= 3 && (_size=(_size..., size(r)[3:end]...))
   A = fill(missingval, _size)
 
+  # 这里能否使用并行
   for i in eachindex(ras)
     r = ras[i]
     b = st_bbox(r)

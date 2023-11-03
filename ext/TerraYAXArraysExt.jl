@@ -10,6 +10,7 @@ Base.getindex(ds::YAXArrays.Dataset, i) = ds[names(ds)[i]]
 Terra.chunksize(ds::YAXArrays.Dataset) = chunksize(ds[1])
 Terra.chunksize(c) = Cubes.cubechunks(c)
 
+Terra.st_bbox(ds::YAXArrays.Dataset) = st_bbox.(get_zarr(ds)) # multiple
 
 function Terra.get_zarr(ds::YAXArrays.Dataset)
   vars = names(ds)
@@ -25,21 +26,27 @@ function Terra.which_grid(ds::YAXArrays.Dataset, (lon, lat))
   !isempty(inds) ? names(ds)[inds[1]] : nothing
 end
 
-
-function Terra.st_mosaic(ds::YAXArrays.Dataset, missingval=0.0f0, crs=EPSG(4326), kw...)
+function Terra.read_ds(ds::YAXArrays.Dataset; index=nothing, missingval=0.0f0, crs=EPSG(4326), kw...)
   grids = names(ds)
+  n = length(grids)
+  res = Vector{Raster}(undef, n)
 
-  ras = []
-  for grid in grids
-    z = ds[grid].data
+  Threads.@threads for i in 1:n
+    grid = grids[i]
+    z = ds[grid].data    
     b = st_bbox(z)
-    ra = Raster(z, st_bbox(z); missingval, crs)
-    push!(ras, ra)
+
+    index !== nothing && (z = z[index...])
+    ra = Raster(z, b; missingval, crs, kw...)
+    res[i] = ra
   end
-  ras
-  st_mosaic(ras)
+  res
 end
 
-Terra.st_bbox(ds::YAXArrays.Dataset) = st_bbox.(get_zarr(ds)) # multiple
+# 这里应该添加选择波段的功能
+function Terra.st_mosaic(ds::YAXArrays.Dataset; index=nothing, missingval=0.0f0, crs=EPSG(4326), kw...)
+  res = read_ds(ds)
+  st_mosaic(res)
+end
 
 end

@@ -5,11 +5,12 @@ using ProgressMeter
 
 export GridChunks, nc_open, nc_close
 export MFDataset, MFVariable, get_chunk
-export chunksize, get_zarr, which_grid
+export chunksize, get_zarr, which_grid, read_ds
 
 function chunksize end
 function get_zarr end
 function which_grid end
+function read_ds end
 
 
 nc_open = NCDataset
