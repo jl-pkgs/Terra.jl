@@ -5,6 +5,6 @@ using Terra
 # println(pwd())
 # cd(dirname(@__FILE__)) do
 include("test-apply.jl")
-include("test-bbox.jl")
+include("test-rast.jl")
 include("test-gdal_polygonize.jl")
 include("test-st_mosaic.jl")

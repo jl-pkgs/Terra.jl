@@ -59,16 +59,25 @@ end
 
 
 
+# https://gdal.org/tutorials/geotransforms_tut.html
+function getgeotransform(ra::AbstractRaster)
+  x, y = st_dims(ra)
+  cellx, celly = st_cellsize(ra)
+  y0 = y[1] - celly/2
+  x0 = x[1] - cellx/2
+  [x0, cellx, 0, y0, 0, celly]
+end
+
+
 ## write tiff 
 # no missing value is allowed
 function write_tiff(ra::AbstractRaster, f::AbstractString;
   nodata=nothing, options=String[], NUM_THREADS=4, BIGTIFF=true)
 
   shortname = find_shortname(f)
-  
   w, h, b = size(ra)
-  dtype = eltype(ga)
-  # data = copy(ga.A)
+  dtype = eltype(ra)
+  data = ra.data
   
   use_nodata = nodata !== nothing # 或者数据含有missing
   # Set compression options for GeoTIFFs
@@ -108,7 +117,8 @@ function write_tiff(ra::AbstractRaster, f::AbstractString;
     end
 
     # Set geotransform and crs
-    gt = affine_to_geotransform(ga.f)
+    gt = getgeotransform(ra)
+    
     # set 
     ArchGDAL.GDAL.gdalsetgeotransform(dataset.ptr, gt)
     ArchGDAL.GDAL.gdalsetprojection(dataset.ptr, GFT.val(ga.crs))
@@ -120,9 +130,6 @@ function write_tiff(ra::AbstractRaster, f::AbstractString;
   end
   fn
 end
-
-
-
 
 
 export st_write

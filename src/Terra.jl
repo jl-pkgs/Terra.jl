@@ -10,6 +10,7 @@ using DocStringExtensions: TYPEDSIGNATURES, METHODLIST
 using Zarr
 using Reexport
 @reexport using Rasters
+@reexport using Extents: extent
 
 rast = Raster
 brick = RasterStack

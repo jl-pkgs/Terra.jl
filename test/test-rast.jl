@@ -1,3 +1,7 @@
+using Test
+using Terra
+
+
 @testset "rast_apply" begin
   using Dates
 
@@ -23,4 +27,17 @@
   # obj_size(data)
   ra = rast(data, b; date=dates)
   @test collect(ra.dims[3]) == dates
+end
+
+
+@testset "extent" begin
+  A = rand(360, 180)
+  b = bbox(-180, -90, 180, 90)
+
+  ra = rast(A, b)
+  # write("a.tif", ra, force=true)
+  # run(`gdalinfo a.tif`)
+  ext = extent(ra)
+  @test ext[1] == (-180, 180)
+  @test ext[2] == (-90, 90)
 end
