@@ -77,6 +77,13 @@ metadata的格式:
 > id_no,xsize,ysize,num_bands
 > lambda_cv_2018-2022_grid1_3,28800,7200,1
 
+- 检查GEE版本的lambda分布
+<https://code.earthengine.google.com/685351f3f977798db60394994316c868>
+
+- 全球LAI平滑任务
+<https://code.earthengine.google.com/125e5c4928ab5fade682a3e4c3ba5704?noload=1>
+
+
 ```{julia}
 using RTableTools
 
