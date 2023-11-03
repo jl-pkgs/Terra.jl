@@ -16,17 +16,18 @@ function st_mosaic(ras::Vector{<:Raster}; missingval=NaN, crs=EPSG(4326), kw...)
   
   _size = length(lon2), length(lat2)
   nd = ndims(r)
-  jcol = repeat([:], nd - 2)
+  cols = repeat([:], nd - 2)
 
   nd >= 3 && (_size=(_size..., size(r)[3:end]...))
   A = fill(missingval, _size)
 
-  # 这里能否使用并行
+  # 这里不能使用并行
+  # Threads.@threads 
   for i in eachindex(ras)
     r = ras[i]
     b = st_bbox(r)
     ilon, ilat = bbox_overlap(b, box; cellsize)
-    A[ilon, ilat, jcol...] = r.data
+    A[ilon, ilat, cols...] .= r.data
   end
   Raster(A, box; missingval, crs, kw...)
 end

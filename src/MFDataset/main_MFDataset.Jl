@@ -1,20 +1,11 @@
 using NCDatasets: NCDataset, CFVariable
-using DiskArrays: GridChunks
 using Parameters
 using ProgressMeter
 
-export GridChunks, nc_open, nc_close
+export nc_open, nc_close
 export MFDataset, MFVariable, get_chunk
-export chunksize, get_zarr, which_grid, read_ds
-
-function chunksize end
-function get_zarr end
-function which_grid end
-function read_ds end
-
 
 nc_open = NCDataset
-GridChunks(z::ZArray) = GridChunks(size(z), chunksize(z))
 
 # guess file type
 function nc_st_bbox(file)

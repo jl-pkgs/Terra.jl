@@ -7,42 +7,68 @@
 
 ```{julia}
 using Terra
-using Ipaper
 using YAXArrays
+using Ipaper
 
 dir_root = "/mnt/z/GitHub/jl-spatial/Whittaker2.jl/scripts/Project_Global_LAI_smoothing"
 indir = "$dir_root/OUTPUT/global_param_lambda_cv"
 
 fs = dir(indir, "zarr")
 f = fs[1]
-
 ds = open_dataset(f)
 ```
+
 
 ## 读取lambda，转为tiff
 
 ### 方案1: tiles
 
 ```{julia}
+outdir = "/mnt/z/GitHub/jl-spatial/Whittaker2.jl/scripts/Project_Global_LAI_smoothing/OUTPUT/GEE"
+
 for f in fs
   prefix = gsub(basename(f), ".zarr", "")
   ds = open_dataset(f)
-  st_ds2tiff(ds; prefix, overwrite=false)
+  writeRaster(ds; prefix, outdir, overwrite=false, index=[:, :, 1])
+  # map(_writeRaster, ds; prefix, overwrite=false, outdir)
 end
 ```
 
 ### 方案2: 拼接为一个大的tiff
 
 ```{julia}
-## 手动拼，保证结果的正确性
-# 并行的方式读数据，然后进行拼接
-@time res = read_ds(ds; index=[:, :, 1]);
-@time ra = st_mosaic(res, missingval=0);
+outdir = "/mnt/z/GitHub/jl-spatial/Whittaker2.jl/scripts/Project_Global_LAI_smoothing/OUTPUT"
 
-fout = "lambda_cv_2000-2004.tif"
-@time write(fout, ra;
-  options=Dict("COMPRESS" => "DEFLATE"), force=true)
+for f in fs[1:end]
+  prefix = replace(basename(f), ".zarr" => "")
+  fout = "$outdir/$prefix.tif"
+  ds = open_dataset(f)
+  
+  @time res = readRaster(ds; index=[:, :, 1], lazy=false);
+  @time ra = st_mosaic(res, missingval=0);
+
+  @time write(fout, ra;
+    options=Dict("COMPRESS" => "DEFLATE", "NUM_THREADS"=>"8"), force=true)
+  GC.gc()
+end
 ```
+
+### 检查拼接后的数据
+
+```{r}
+library(terra)
+library(Ipaper)
+indir = "/mnt/z/GitHub/jl-spatial/Whittaker2.jl/scripts/Project_Global_LAI_smoothing/OUTPUT"
+fs = dir(indir, "*.tif", full.names = TRUE)
+# f = fs[1]; plot(rast(f), main = basename(f))
+write_fig({
+  par(mfrow = c(3, 2))
+  for(f in fs) {
+    plot(rast(f), main = basename(f))
+  }
+}, "Figure1_global_lambda_cv.pdf", 11, 7)
+```
+
 
 ## upload to gee
 
@@ -52,17 +78,41 @@ metadata的格式:
 > lambda_cv_2018-2022_grid1_3,28800,7200,1
 
 ```{julia}
-run(`./gee_upload.sh`)
+using RTableTools
+
+indir = realpath("/mnt/z/GitHub/jl-spatial/Whittaker2.jl/scripts/Project_Global_LAI_smoothing/OUTPUT")
+fs = dir(indir, "tif")
+
+ra = rast(fs[1], lazy=true)
+x, y = st_dims(ra)
+
+l = (;xsize=length(x),ysize=length(y),num_bands=1)
+info = cbind(; id_no=replace.(basename.(fs), ".tif" => ""), 
+  _=DF(repeat([l], length(fs))))
+meta = realpath("gee_info.csv")
+fwrite(info, meta)
+
+user="kjding93@gmail.com"
+col="projects/gee-hydro/MODIS_Terra_LAI/global_lambda_cv"
+
+geeup = "/opt/miniconda3/bin/geeup"
+cmd = `$geeup upload --source $indir --dest $col -m $meta --nodata 0 -u "$user"`
+run(cmd);
+# run(`/opt/miniconda3/bin/geeup -h`)
 ```
 
 ```{julia}
-col_org = "projects/gee-hydro/MODIS_Terra_LAI/global_param_lambda_cv"
-col_new = "projects/gee-hydro/MODIS_Terra_LAI/param_lambda_cv/lambda_cv_2018_2022"
-
+col_org = "projects/gee-hydro/MODIS_Terra_LAI/global_ambda_cv"
+# col_new = "projects/gee-hydro/MODIS_Terra_LAI/param_lambda_cv/lambda_cv_2018_2022"
 run(`geeadd move --initial $col_org --final $col_new`)
 ```
 
+> 删除
+
+```{julia}
+col = "projects/gee-hydro/MODIS_Terra_LAI/param_lambda_cv/lambda_cv_2018_2022"
+
+run(`geeadd delete --id projects/gee-hydro/MODIS_Terra_LAI/param_lambda_cv/lambda_cv_2018_2022`)
+```
+
 ## Issues
-
-- [ ]`1-4`边际网格似乎超出了地球范围，全球LAI计算过程中报错
-

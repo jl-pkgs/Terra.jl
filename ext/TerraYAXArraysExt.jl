@@ -26,27 +26,81 @@ function Terra.which_grid(ds::YAXArrays.Dataset, (lon, lat))
   !isempty(inds) ? names(ds)[inds[1]] : nothing
 end
 
-function Terra.read_ds(ds::YAXArrays.Dataset; index=nothing, missingval=0.0f0, crs=EPSG(4326), kw...)
+"""
+    Base.map(fun::Function, ds::YAXArrays.Dataset; 
+        index=nothing, missingval=0.0f0, crs=EPSG(4326), kw...)
+
+# Arguments
+- `type`: type of return values 
+- `kw`: others to `fun`
+
+# Examples
+```julia
+function _writeRaster(ra, grid; prefix = "", outdir=".", overwrite=false)
+  grid2 = replace(grid, "grid."=>"grid")
+  fout = "\$outdir/\$(prefix)_\$grid2.tif"
+
+  if !isfile(fout) || overwrite
+    @show basename(fout)
+    @time write(fout, ra;
+      options=Dict("COMPRESS" => "DEFLATE"), # or LZW; not support the default
+      force=true)
+  end
+  nothing
+end
+
+map(_writeRaster, ds; prefix, outdir, overwrite, kw...)
+```
+"""
+function Base.map(fun::Function, ds::YAXArrays.Dataset; 
+  index=nothing, missingval=0.0f0, crs=EPSG(4326), type=Raster, lazy=true, kw...)
+
   grids = names(ds)
   n = length(grids)
-  res = Vector{Raster}(undef, n)
+  res = Vector{type}(undef, n)
 
   Threads.@threads for i in 1:n
     grid = grids[i]
-    z = ds[grid].data    
+    z = ds[grid].data
     b = st_bbox(z)
 
-    index !== nothing && (z = z[index...])
-    ra = Raster(z, b; missingval, crs, kw...)
-    res[i] = ra
+    if index !== nothing
+      z = lazy ? @view(z[index...]) : z[index...]
+    end
+    ra = Raster(z, b; missingval, crs)
+    r = fun(ra, grid; kw...) 
+    r !== nothing && (res[i] = r)
   end
   res
 end
 
-# 这里应该添加选择波段的功能
+function Terra.readRaster(ds::YAXArrays.Dataset; kw...)
+  self(ra, grid; kw...) = ra
+  map(self, ds; kw...)
+end
+
+function _writeRaster(ra, grid; prefix = "", outdir=".", overwrite=false)
+  grid2 = replace(grid, "grid."=>"grid")
+  fout = "$outdir/$(prefix)_$grid2.tif"
+
+  if !isfile(fout) || overwrite
+    @show basename(fout)
+    @time write(fout, ra;
+      options=Dict("COMPRESS" => "DEFLATE"), # or LZW; not support the default
+      force=true)
+  end
+  nothing
+end
+
+function Terra.writeRaster(ds::YAXArrays.Dataset; prefix = "", outdir=".", overwrite=false, kw...)
+  map(_writeRaster, ds; prefix, outdir, overwrite, kw...)
+end
+
+
 function Terra.st_mosaic(ds::YAXArrays.Dataset; index=nothing, missingval=0.0f0, crs=EPSG(4326), kw...)
-  res = read_ds(ds)
+  res = read_ds(ds; index, missingval, crs, kw...)
   st_mosaic(res)
 end
+
 
 end
