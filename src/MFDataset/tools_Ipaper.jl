@@ -59,4 +59,21 @@ dist(p1, points::AbstractVector) = [dist(p1, p2) for p2 in points]
 findnear(p1, points::AbstractVector) = findmin(dist(p1, points))[2]
 
 
+# Base.Regex(x::Regex) = x
+StringOrRegex = Union{AbstractString,Regex}
+
+function grepl(x::AbstractString, pattern::StringOrRegex)
+  r = match(Regex(pattern), x)
+  r === nothing ? false : true
+end
+
+function grepl(x::Vector{<:AbstractString}, pattern::StringOrRegex)::AbstractVector{Bool}
+  map(x -> grepl(x, pattern), x)
+end
+
+function grep(x::Union{AbstractString,Vector{<:AbstractString}}, pattern::StringOrRegex)::AbstractVector{Int}
+  grepl(x, pattern) |> findall
+end
+
+
 export findnear

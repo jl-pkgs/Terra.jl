@@ -1,20 +1,9 @@
-using NCDatasets: NCDataset, CFVariable
 using Parameters
 using ProgressMeter
 
-export nc_open, nc_close
 export MFDataset, MFVariable, get_chunk
 
-nc_open = NCDataset
-
-# guess file type
-function nc_st_bbox(file)
-  nc_open(file) do nc
-    lat = nc[r"lat"][:]
-    lon = nc[r"lon"][:]
-    st_bbox(lon, lat)
-  end
-end
+include("tools_NCDatasets.jl")
 
 # TODO: 加一个Base.show function
 # MFDataset(;fs, nc, bands, ...)
