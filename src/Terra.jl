@@ -1,4 +1,3 @@
-
 module Terra
 
 # using NCDatasets
@@ -14,18 +13,20 @@ using Reexport
 rast = Raster
 brick = RasterStack
 
+include("GDAL/GDAL.jl")
 
 include("st_bbox.jl")
 include("Raster.jl")
 
-include("GDAL/GDAL.jl")
-
+include("st_dims.jl")
+include("st_extract.jl")
+include("st_mosaic.jl")
+include("st_resample.jl")
 include("st_write.jl")
 
 # include("rast.jl")
 include("apply.jl")
 include("tools.jl")
-
 
 
 export rast, brick, 

@@ -45,10 +45,19 @@ function bbox2ndim(b; size=nothing, cellsize=nothing, )
   length(x), length(y)
 end
 
+"""
+    in_bbox(b::bbox, (lon, lat))  
+    in_bbox(bs::Vector{bbox}, (lon, lat))
+"""
+in_bbox(b::bbox, (lon, lat)) = (b.xmin < lon < b.xmax) && (b.ymin < lat < b.ymax)
+
+in_bbox(bs::Vector{bbox}, (lon, lat)) = [in_bbox(b, (lon, lat)) for b in bs]
+
 
 bbox2range(b::bbox) = [b.xmin, b.xmax, b.ymin, b.ymax]
 bbox2tuple(b::bbox) = (xmin=b.xmin, ymin=b.ymin, xmax=b.xmax, ymax=b.ymax)
 bbox2vec(b::bbox) = [b.xmin, b.ymin, b.xmax, b.ymax]
+bbox2lims(b::bbox) = ((b.xmin, b.xmax), (b.ymin, b.ymax))
 
 
 
@@ -88,6 +97,7 @@ end
 
 ## add support for Rasters
 using Rasters: Raster
+using Zarr
 
 function st_bbox(ra::Raster)
   dims = ra.dims
@@ -99,44 +109,14 @@ end
 
 st_bbox(ras::Vector{<:Raster}) = st_bbox(st_bbox.(ras))
 
-
-function st_cellsize(r::Raster)
-  lon = r.dims[1] # X
-  lat = r.dims[2] # Y
-
-  lon[2] - lon[1], lat[2] - lat[1] # cellx, celly
-end
-
-function st_mosaic(ras::Vector{<:Raster}; missingval=NaN)
-  r = ras[1]
-  T = eltype(r)
-  missingval = T(missingval)
-
-  cellsize = st_cellsize(r)
-  
-  box = st_bbox(ras)
-  lon2, lat2 = bbox2dims(box; cellsize)
-  
-  _size = length(lon2), length(lat2)
-  nd = ndims(r)
-  jcol = repeat([:], nd - 2)
-
-  nd >= 3 && (_size=(_size..., size(r)[3:end]...))
-  A = fill(missingval, _size)
-
-  for i in eachindex(ras)
-    r = ras[i]
-    b = st_bbox(r)
-    ilon, ilat = bbox_overlap(b, box; cellsize)
-    A[ilon, ilat, jcol...] = r.data
-  end
-  Raster(A, box; missingval)
-end
+st_bbox(z::ZArray) = Terra.bbox(z.attrs["bbox"]...)
+st_bbox(zs::Vector{<:ZArray}) = st_bbox(st_bbox.(zs))
 
 
 export bbox,
+  in_bbox, bbox2lims, 
   bbox2cellsize,
   bbox2range, bbox2vec,
   bbox2dims, bbox2ndim,
   bbox_overlap
-export st_bbox, st_mosaic, st_cellsize
+export st_bbox, st_cellsize
