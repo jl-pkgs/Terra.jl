@@ -3,9 +3,7 @@ using ProgressMeter
 
 export MFDataset, MFVariable, get_chunk
 
-include("tools_NCDatasets.jl")
 
-# TODO: 加一个Base.show function
 # MFDataset(;fs, nc, bands, ...)
 @with_kw mutable struct MFDataset
   fs::Vector{String}
@@ -31,9 +29,7 @@ mutable struct MFVariable{T,N}
 end
 
 
-# v = m["LAI"]
 function Base.getindex(m::MFDataset, key::Union{String,Symbol})
-  # return a MFVariable
   vars = map(nc -> nc[key], m.nc)
   var = vars[1]
   MFVariable{eltype(var),ndims(var)}(vars)
@@ -41,6 +37,7 @@ end
 
 Base.getindex(v::MFVariable, i) = v.vars[i]
 
+# v = m["LAI"]
 # data = v[i, j]
 function Base.getindex(v::MFVariable{T,3}, i, j; dims=3) where {T}
   ntime = map(x -> size(x, 3), v.vars) |> sum
@@ -67,4 +64,21 @@ end
 function get_chunk(m::MFDataset, k; InVars=m.bands)
   ii, jj, _ = m.chunks[k]
   map(band -> m[band][ii, jj], InVars)
+end
+
+function Base.show(io::IO, m::MFDataset)
+  printstyled("MFDataset \n", color=:blue, bold=true, underline=true)
+  println(io, "bands      : $(m.bands)")
+  println(io, "nc         : $(eltype(m.nc)), size=", size(m.nc))
+  println(io, "bbox       : $(m.bbox)")
+  println(io, "chunksize  : $(m.chunksize)")
+  println(io, "chunks     : size=", size(m.chunks)) # eltype(m.chunks), 
+  println(io, "ntime      : $(m.ntime)")
+
+  printstyled("File and size: \n", color=:blue, underline=true)
+  for i in eachindex(m.fs)
+    f = basename(m.fs[i])
+    size = m.sizes[i]
+    println(io, f => size)
+  end
 end

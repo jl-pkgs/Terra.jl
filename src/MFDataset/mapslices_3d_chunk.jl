@@ -73,3 +73,5 @@ end
 # > 性能提升了25%
 
 # 为何他们俩性能相差这么多？
+
+export mapslices_3d_chunk
