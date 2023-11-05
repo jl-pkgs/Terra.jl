@@ -4,6 +4,8 @@ using Terra
 using Rasters
 using Test
 
+dir_root = dirname(dirname(@__FILE__))
+
 @testset "brick" begin
   b = bbox(70, 15, 140, 55)
   A = rand(10, 10, 5)
@@ -18,7 +20,20 @@ end
 # write("data/test1-03.nc", ras)
 # write("data/test1-04.nc", ras)
 
-dir_root = dirname(dirname(@__FILE__))
+@testset "tiff file" begin
+  # b = bbox(70, 15, 140, 55)
+  # A = rand(10, 10)
+  # ra = rast(A, b)
+  f = "$dir_root/data/test1.tif"
+  # write(f, ra, force=true)
+
+  ra = rast(f)
+  @test st_bbox(ra) == st_bbox(f)
+end
+## 数据保存没有问题，可能是读取的时候出现了bug
+# ra = Raster(f) |> edge2center
+
+
 indir = "$dir_root/data"
 fs = [
   "$indir/test1-01.nc",
@@ -26,13 +41,13 @@ fs = [
   "$indir/test1-03.nc",
   "$indir/test1-04.nc"
 ]
-f = fs[1]
+f = fs[1]# coord存在明显的错误
 
 @testset "MFDataset" begin
-  _chunkszie = (5, 5, typemax(Int)) 
+  _chunkszie = (5, 5, typemax(Int))
   m = MFDataset(fs, _chunkszie)
 
   @test m.bbox == st_bbox(f)
   @test m.ntime == 20
-  @test size(m.chunks) == (2, 2, 1)  
+  @test size(m.chunks) == (2, 2, 1)
 end

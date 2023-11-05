@@ -5,7 +5,18 @@ export MFDataset, MFVariable, get_chunk
 
 
 # MFDataset(;fs, nc, bands, ...)
-@with_kw mutable struct MFDataset
+"""
+    MFDataset(fs) = MFDataset(; fs)
+    MFDataset(fs, chunksize) = MFDataset(; fs, chunksize)
+
+# Examples
+```julia
+m = MFDataset(fs)
+v = m["LAI"]
+data = v[i, j]
+```
+"""
+@with_kw_noshow mutable struct MFDataset
   fs::Vector{String}
   nc::Vector{NCDataset{Nothing}} = nc_open.(fs)
   bands = nc_bands(nc[1])
@@ -37,8 +48,7 @@ end
 
 Base.getindex(v::MFVariable, i) = v.vars[i]
 
-# v = m["LAI"]
-# data = v[i, j]
+
 function Base.getindex(v::MFVariable{T,3}, i, j; dims=3) where {T}
   ntime = map(x -> size(x, 3), v.vars) |> sum
   nlon, nlat = size(v.vars[1])[1:2]

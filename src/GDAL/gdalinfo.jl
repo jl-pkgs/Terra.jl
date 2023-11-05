@@ -16,36 +16,32 @@ end
 getgeotransform(dataset::Ptr)::Vector{Cdouble} =
   getgeotransform!(dataset, Vector{Cdouble}(undef, 6))
 
-width(band) = GDAL.gdalgetrasterbandxsize(band)
+width(band) = GDAL.gdalgetrasterbandxsize(band) # error at here
 height(band) = GDAL.gdalgetrasterbandysize(band)
 
-
 function gdalinfo(file::AbstractString)
-  # ds = ArchGDAL.read(file)
-  # band = ArchGDAL.getband(ds, 1)
   # nband = nband(file)
   ds = gdal_open(file)
   gt = getgeotransform(ds)
-
-  w, h = width(ds), height(ds)
+  band = GDAL.gdalgetrasterband(ds, 1)
+  w, h = width(band), height(band)
   gdal_close(ds)
 
-  dx, dy = gt[2], -gt[end]
+  dx, dy = gt[2], gt[end]
   x0 = gt[1] #+ dx/2
+  y0 = gt[4] #- dy/2
   x1 = x0 + w * dx
-  y1 = gt[4] #- dy/2
-  y0 = y1 - h * dy
-  b = bbox(x0, y0, x1, y1)
+  y1 = y0 + h * dy
 
   lon = x0+dx/2:dx:x1
-  lat = reverse(y0+dy/2:dy:y1)
-  # nband = ArchGDAL.nraster(ds)
+  lat = y0+dy/2:dy:y1
+  b = st_bbox(lon, lat) # b = bbox(x0, y0, x1, y1)
 
   Dict(
-    # "file"     => basename(file),
+    "file" => basename(file),
     "bbox" => b,
     "cellsize" => [dx, dy],
-    "coords" => [lon, lat],
-    "dim" => Int64.([w, h, nband(file)])
+    "dims" => [lon, lat],
+    "size" => Int64.([w, h, nband(file)])
   ) # convert to tuple
 end

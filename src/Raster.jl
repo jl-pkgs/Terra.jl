@@ -1,5 +1,5 @@
 using Rasters: Intervals, Center, ForwardOrdered, ReverseOrdered
-
+using DimensionalData
 
 """
     guess_dims(A::AbstractMatrix, b::bbox; 
@@ -7,7 +7,7 @@ using Rasters: Intervals, Center, ForwardOrdered, ReverseOrdered
     guess_dims(A::AbstractArray{T,3}, b::bbox;
         reverse_lat=true, date=nothing, kw...) where {T}    
 """
-function guess_dims(A::AbstractMatrix, b::bbox; 
+function guess_dims(A::AbstractMatrix, b::bbox;
   reverse_lat=true, sampling=Intervals(Center()), ignored...)
   # range = bbox2range(b)
   cellsize = bbox2cellsize(b, size(A))
@@ -21,7 +21,7 @@ end
 
 function guess_dims(A::AbstractArray{T,3}, b::bbox;
   reverse_lat=true, date=nothing, kw...) where {T}
-  
+
   x, y = guess_dims(@view(A[:, :, 1]), b; reverse_lat, kw...)
   ntime = size(A, 3)
   time = date === nothing ? Ti(1:ntime) : Ti(date)
@@ -31,10 +31,19 @@ end
 
 # only for 2d and 3d array
 # 默认不要missingval
-function Raster(A::AbstractArray, b::bbox; 
-  reverse_lat=true, date=nothing, 
+function Raster(A::AbstractArray, b::bbox;
+  reverse_lat=true, date=nothing,
   missingval=nothing, kw...)
 
   dims = guess_dims(A, b; date, reverse_lat)
   Raster(A, dims; missingval, kw...)
 end
+
+function edge2center(ra)
+  ds = map(dims(ra)) do d
+    Rasters.maybeshiftlocus(Center(), d)
+  end
+  set(ra, ds)
+end
+
+export edge2center

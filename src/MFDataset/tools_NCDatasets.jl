@@ -42,12 +42,16 @@ struct FileTiff
   file
 end
 
+struct FileGDAL
+  file
+end
+
 export file_ext
 file_ext(file::String) = file[findlast(==('.'), file):end]
 
 FileType = Dict(
-  ".nc" => FileNetCDF, 
-  ".tif" => FileTiff, 
+  ".nc" => FileNetCDF,
+  ".tif" => FileGDAL
 )
 
 function guess_filetype(f::String)
@@ -69,9 +73,8 @@ function st_dims(x::FileNetCDF)
   end
 end
 
-function st_dims(x::FileTiff)
-  ra = Raster(x.file; lazy=true)
-  st_dims(ra)
+function st_dims(x::FileGDAL)
+  gdalinfo(x.file)["dims"]
 end
 
 function st_bbox(f::String)
