@@ -1,7 +1,6 @@
 # 生成一些测试数据
 # using NetCDFTools
 using Terra
-using Rasters
 using Test
 
 dir_root = dirname(dirname(@__FILE__))

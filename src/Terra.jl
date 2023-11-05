@@ -17,10 +17,10 @@ brick = RasterStack
 
 include("GDAL/GDAL.jl")
 
+include("st_dims.jl")
 include("st_bbox.jl")
 include("Raster.jl")
 
-include("st_dims.jl")
 include("st_extract.jl")
 include("st_mosaic.jl")
 include("st_resample.jl")

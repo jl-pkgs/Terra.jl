@@ -28,7 +28,7 @@ return the overlaping indexes `inds`, and corresponding (i,j)
 inds, locs = st_location(r, points)
 ```
 """
-function st_location(ra::Raster, points::Vector{Tuple{T,T}}) where {T<:Real}
+function st_location(ra::AbstractRaster, points::Vector{Tuple{T,T}}) where {T<:Real}
   b = st_bbox(ra)
   nx, ny = size(ra)[1:2]
   cellx, celly = st_cellsize(ra)
@@ -37,7 +37,7 @@ function st_location(ra::Raster, points::Vector{Tuple{T,T}}) where {T<:Real}
 end
 
 
-function st_extract(ra::Raster, points::Vector{Tuple{T,T}}; combine=hcat) where {T<:Real}
+function st_extract(ra::AbstractRaster, points::Vector{Tuple{T,T}}; combine=hcat) where {T<:Real}
   inds, locs = st_location(ra, points)
   cols = repeat([:], ndims(ra) - 2)
   lst = [ra.data[i, j, cols...] for (i, j) in locs]

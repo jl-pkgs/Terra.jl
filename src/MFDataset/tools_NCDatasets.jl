@@ -33,37 +33,6 @@ function nc_bands(ds::NCDataset)
   setdiff(vars, [dims; dims .* "_bnds"; "height"])
 end
 
-
-struct FileNetCDF
-  file
-end
-
-struct FileTiff
-  file
-end
-
-struct FileGDAL
-  file
-end
-
-export file_ext
-file_ext(file::String) = file[findlast(==('.'), file):end]
-
-FileType = Dict(
-  ".nc" => FileNetCDF,
-  ".tif" => FileGDAL
-)
-
-function guess_filetype(f::String)
-  ext = file_ext(f)
-  FileType[ext](f)
-end
-
-function st_dims(f::String)
-  x = guess_filetype(f)
-  st_dims(x)
-end
-
 # guess file type
 function st_dims(x::FileNetCDF)
   nc_open(x.file) do nc
@@ -73,14 +42,6 @@ function st_dims(x::FileNetCDF)
   end
 end
 
-function st_dims(x::FileGDAL)
-  gdalinfo(x.file)["dims"]
-end
-
-function st_bbox(f::String)
-  lon, lat = st_dims(f)
-  st_bbox(lon, lat)
-end
 
 function Base.getindex(ds::NCDataset, pattern::Regex)
   _keys = keys(ds)
