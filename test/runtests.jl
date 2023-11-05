@@ -1,9 +1,10 @@
 using Test
 using Terra
 
-# println(dirname(@__FILE__))
+# println(dirname(dirname(@__FILE__)))
 # println(pwd())
 # cd(dirname(@__FILE__)) do
+include("test-MFDataset.jl")
 include("test-mapslices.jl")
 include("test-apply.jl")
 include("test-rast.jl")

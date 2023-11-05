@@ -27,18 +27,56 @@ function nc_bands(ds::NCDataset)
     "prob", "probs",
     "bnds",
     # "vertical", 
-    # "x", "y", "z",
+    "x", "y",
+    # "z",
     "time", "time_bounds"]
   setdiff(vars, [dims; dims .* "_bnds"; "height"])
 end
 
+
+struct FileNetCDF
+  file
+end
+
+struct FileTiff
+  file
+end
+
+export file_ext
+file_ext(file::String) = file[findlast(==('.'), file):end]
+
+FileType = Dict(
+  ".nc" => FileNetCDF, 
+  ".tif" => FileTiff, 
+)
+
+function guess_filetype(f::String)
+  ext = file_ext(f)
+  FileType[ext](f)
+end
+
+function st_dims(f::String)
+  x = guess_filetype(f)
+  st_dims(x)
+end
+
 # guess file type
-function nc_st_bbox(file)
-  nc_open(file) do nc
-    lat = nc[r"lat"][:]
-    lon = nc[r"lon"][:]
-    st_bbox(lon, lat)
+function st_dims(x::FileNetCDF)
+  nc_open(x.file) do nc
+    lon = nc[r"lon|x$"][:]
+    lat = nc[r"lat|y$"][:]
+    lon, lat
   end
+end
+
+function st_dims(x::FileTiff)
+  ra = Raster(x.file; lazy=true)
+  st_dims(ra)
+end
+
+function st_bbox(f::String)
+  lon, lat = st_dims(f)
+  st_bbox(lon, lat)
 end
 
 function Base.getindex(ds::NCDataset, pattern::Regex)
@@ -48,3 +86,5 @@ function Base.getindex(ds::NCDataset, pattern::Regex)
   ds[_name]
 end
 
+
+export FileNetCDF

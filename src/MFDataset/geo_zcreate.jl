@@ -55,7 +55,8 @@ end
 
 
 function geo_zcreate(p::String, varname::String, b::bbox, cellsize, band; kw...)
-
   lon, lat = bbox2dims(b; cellsize)
   geo_zcreate(p, varname, lon, lat, band; kw...)
 end
+
+export geo_zcreate

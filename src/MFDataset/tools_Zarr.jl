@@ -1,6 +1,8 @@
 using Zarr
 using JSON
 
+include("geo_zcreate.jl")
+
 zarr_rm(p) = rm(p, recursive=true, force=true)
 
 ## DirectoryStore

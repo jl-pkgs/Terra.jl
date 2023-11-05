@@ -10,7 +10,7 @@ export MFDataset, MFVariable, get_chunk
   nc::Vector{NCDataset{Nothing}} = nc_open.(fs)
   bands = nc_bands(nc[1])
 
-  bbox::bbox = nc_st_bbox(fs[1])
+  bbox::bbox = st_bbox(fs[1])
   sizes = map(nc -> size(nc[bands[1]]), nc) # variable dimension size
   ntime = sum(map(last, sizes)) # 时间在最后一维
 

@@ -58,3 +58,6 @@ function mapslices_3d_zarr(p::String,
   println(z)
   mapslices_3d!(z, f, m, InVars; kw...)
 end
+
+
+export mapslices_3d_zarr

@@ -67,6 +67,8 @@ function grepl(x::AbstractString, pattern::StringOrRegex)
   r === nothing ? false : true
 end
 
+Base.Regex(x::Regex) = x
+
 function grepl(x::Vector{<:AbstractString}, pattern::StringOrRegex)::AbstractVector{Bool}
   map(x -> grepl(x, pattern), x)
 end
