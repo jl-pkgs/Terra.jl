@@ -1,0 +1,23 @@
+```{julia}
+using CUDA
+
+CUDA.versioninfo()
+```
+
+
+```{julia}
+N = 2048
+a = rand(Float32, N)
+b = rand(Float32, N)
+c = similar(a)
+
+c .= a .+ b
+```
+
+```{julia}
+a_gpu = cu(a)
+b_gpu = cu(b)
+c_gpu = similar(a)
+
+c_gpu .= a_gpu .+ b_gpu
+```

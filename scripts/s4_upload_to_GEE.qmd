@@ -11,7 +11,7 @@ using YAXArrays
 using Ipaper
 
 dir_root = "/mnt/z/GitHub/jl-spatial/Whittaker2.jl/scripts/Project_Global_LAI_smoothing"
-indir = "$dir_root/OUTPUT/global_param_lambda_cv"
+indir = "$dir_root/OUTPUT/global_param_lambda_vcurve"
 
 fs = dir(indir, "zarr")
 f = fs[1]
@@ -37,13 +37,14 @@ end
 ### 方案2: 拼接为一个大的tiff
 
 ```{julia}
-outdir = "/mnt/z/GitHub/jl-spatial/Whittaker2.jl/scripts/Project_Global_LAI_smoothing/OUTPUT"
+outdir = "/mnt/z/GitHub/jl-spatial/Whittaker2.jl/scripts/Project_Global_LAI_smoothing/OUTPUT/global_param_lambda_vcurve"
 
 for f in fs[1:end]
   prefix = replace(basename(f), ".zarr" => "")
   fout = "$outdir/$prefix.tif"
   ds = open_dataset(f)
   
+  printstyled("=========================\n", color=:green)
   @time res = readRaster(ds; index=[:, :, 1], lazy=false);
   @time ra = st_mosaic(res, missingval=0);
 
@@ -58,7 +59,7 @@ end
 ```{r}
 library(terra)
 library(Ipaper)
-indir = "/mnt/z/GitHub/jl-spatial/Whittaker2.jl/scripts/Project_Global_LAI_smoothing/OUTPUT"
+indir = "/mnt/z/GitHub/jl-spatial/Whittaker2.jl/scripts/Project_Global_LAI_smoothing/OUTPUT/global_param_lambda_vcurve"
 fs = dir(indir, "*.tif", full.names = TRUE)
 # f = fs[1]; plot(rast(f), main = basename(f))
 write_fig({
@@ -66,7 +67,7 @@ write_fig({
   for(f in fs) {
     plot(rast(f), main = basename(f))
   }
-}, "Figure1_global_lambda_cv.pdf", 11, 7)
+}, "Figure1_global_lambda_vcurve.pdf", 11, 7)
 ```
 
 
@@ -85,9 +86,11 @@ metadata的格式:
 
 
 ```{julia}
+using Terra
 using RTableTools
+using Ipaper
 
-indir = realpath("/mnt/z/GitHub/jl-spatial/Whittaker2.jl/scripts/Project_Global_LAI_smoothing/OUTPUT")
+indir = realpath("/mnt/z/GitHub/jl-spatial/Whittaker2.jl/scripts/Project_Global_LAI_smoothing/OUTPUT/global_param_lambda_vcurve")
 fs = dir(indir, "tif")
 
 ra = rast(fs[1], lazy=true)
@@ -96,11 +99,12 @@ x, y = st_dims(ra)
 l = (;xsize=length(x),ysize=length(y),num_bands=1)
 info = cbind(; id_no=replace.(basename.(fs), ".tif" => ""), 
   _=DF(repeat([l], length(fs))))
-meta = realpath("gee_info.csv")
+meta = realpath(".") * "/gee_info.csv"
 fwrite(info, meta)
 
+method = "vcurve"
 user="kjding93@gmail.com"
-col="projects/gee-hydro/MODIS_Terra_LAI/global_lambda_cv"
+col="projects/gee-hydro/MODIS_Terra_LAI/global_lambda_$method"
 
 geeup = "/opt/miniconda3/bin/geeup"
 cmd = `$geeup upload --source $indir --dest $col -m $meta --nodata 0 -u "$user"`
@@ -118,7 +122,6 @@ run(`geeadd move --initial $col_org --final $col_new`)
 
 ```{julia}
 col = "projects/gee-hydro/MODIS_Terra_LAI/param_lambda_cv/lambda_cv_2018_2022"
-
 run(`geeadd delete --id projects/gee-hydro/MODIS_Terra_LAI/param_lambda_cv/lambda_cv_2018_2022`)
 ```
 
