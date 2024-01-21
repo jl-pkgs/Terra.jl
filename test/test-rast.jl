@@ -1,5 +1,6 @@
 using Test
 using Terra
+using Rasters.Extents: extent
 
 
 @testset "rast_apply" begin

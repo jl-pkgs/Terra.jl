@@ -9,6 +9,8 @@ using DocStringExtensions: TYPEDSIGNATURES, METHODLIST
 
 using Zarr
 using Reexport
+
+@reexport using Ipaper.sf
 @reexport using Rasters
 using Rasters: AbstractRaster
 
