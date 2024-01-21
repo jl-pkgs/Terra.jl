@@ -1,5 +1,5 @@
 using Rasters: Intervals, Center, ForwardOrdered, ReverseOrdered
-using DimensionalData
+using Rasters.DimensionalData
 
 """
     guess_dims(A::AbstractMatrix, b::bbox; 

@@ -1,37 +1,4 @@
-macro par(parallel, ex)
-  ex_par = :(Threads.@threads for _ in 1:1; end)
-  ex_par.args[3] = ex
-  
-  expr = :(parallel ? $(ex_par) : $(ex))
-  esc(expr)
-end
-
-macro par(ex)
-  # default parallel
-  ex_par = :(Threads.@threads for _ in 1:1; end)
-  ex_par.args[3] = ex
-  esc(ex_par)
-end
-
-get_clusters() = Threads.nthreads()
-
-
-function r_chunk(n::Int, nchunk=5)
-  chunk = fld(n, nchunk) 
-  map(i -> begin
-    if i < nchunk
-      _inds = (i-1)*chunk+1:i*chunk
-    else
-      _inds = (i-1)*chunk+1:n
-    end
-  end, 1:nchunk)
-end
-
-function r_chunk(x::AbstractVector, nchunk=5)
-  n = length(x)
-  inds = r_chunk(n, nchunk)
-  map(i -> x[i], inds)
-end
+using NetCDFTools.Ipaper
 
 # import DataStructures: OrderedDict
 # merge Vector of Tuple
@@ -57,25 +24,5 @@ dist(p1, p2) = sqrt((p1[1] - p2[1])^2 + (p1[2] - p2[2])^2)
 dist(p1, points::AbstractVector) = [dist(p1, p2) for p2 in points]
 
 findnear(p1, points::AbstractVector) = findmin(dist(p1, points))[2]
-
-
-# Base.Regex(x::Regex) = x
-StringOrRegex = Union{AbstractString,Regex}
-
-function grepl(x::AbstractString, pattern::StringOrRegex)
-  r = match(Regex(pattern), x)
-  r === nothing ? false : true
-end
-
-Base.Regex(x::Regex) = x
-
-function grepl(x::Vector{<:AbstractString}, pattern::StringOrRegex)::AbstractVector{Bool}
-  map(x -> grepl(x, pattern), x)
-end
-
-function grep(x::Union{AbstractString,Vector{<:AbstractString}}, pattern::StringOrRegex)::AbstractVector{Int}
-  grepl(x, pattern) |> findall
-end
-
 
 export findnear
