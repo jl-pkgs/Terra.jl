@@ -1,5 +1,5 @@
-using GDAL
-using GDAL_jll: gdalinfo_path, ogrinfo_path
+using ArchGDAL.GDAL
+using ArchGDAL.GDAL.GDAL_jll: gdalinfo_path, ogrinfo_path
 
 include("gdal_basic.jl")
 include("gdal_polygonize.jl")

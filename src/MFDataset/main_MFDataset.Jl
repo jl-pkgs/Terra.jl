@@ -49,7 +49,8 @@ end
 Base.getindex(v::MFVariable, i) = v.vars[i]
 
 
-function Base.getindex(v::MFVariable{T,3}, i, j; dims=3) where {T}
+# dims = 3
+function Base.getindex(v::MFVariable{T,3}, i, j; ) where {T}
   ntime = map(x -> size(x, 3), v.vars) |> sum
   nlon, nlat = size(v.vars[1])[1:2]
   i != Colon() && (nlon = length(i))
@@ -58,7 +59,6 @@ function Base.getindex(v::MFVariable{T,3}, i, j; dims=3) where {T}
   nlat == 1 && (j = [j])
 
   res = zeros(T, nlon, nlat, ntime)
-  # obj_size(res)
   i_beg = 0
   @inbounds for var in v.vars
     _ntime = size(var, 3)
@@ -69,6 +69,24 @@ function Base.getindex(v::MFVariable{T,3}, i, j; dims=3) where {T}
   res
   # res = map(var -> var[i, j, :], v.vars)
   # cat(res...; dims)
+end
+
+
+function Base.getindex(v::MFVariable{T,2}, i, j) where {T}
+  ntime = length(v.vars)
+  nlon, nlat = size(v.vars[1])[1:2]
+  i != Colon() && (nlon = length(i))
+  j != Colon() && (nlat = length(j))
+  nlon == 1 && (i = [i])
+  nlat == 1 && (j = [j])
+
+  res = zeros(T, nlon, nlat, ntime)
+  k = 0
+  @inbounds for var in v.vars
+    k += 1
+    res[:, :, k] .= var[i, j]
+  end
+  res
 end
 
 function get_chunk(m::MFDataset, k; InVars=m.bands)
