@@ -1,7 +1,3 @@
-using ArchGDAL
-const AG = ArchGDAL
-
-
 # copied from `GeoArrays`
 const gdt_conversion = Dict{DataType,DataType}(
   Bool => UInt8,
