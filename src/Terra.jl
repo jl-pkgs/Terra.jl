@@ -14,7 +14,7 @@ const AG = ArchGDAL
 @reexport using Ipaper.sf
 @reexport using Rasters
 using Rasters: AbstractRaster
-Raster = Raster
+# Raster = Raster
 brick = RasterStack
 
 include("GDAL/GDAL.jl")
