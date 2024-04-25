@@ -61,11 +61,11 @@ library(terra)
 library(Ipaper)
 indir = "/mnt/z/GitHub/jl-spatial/Whittaker2.jl/scripts/Project_Global_LAI_smoothing/OUTPUT/global_param_lambda_vcurve"
 fs = dir(indir, "*.tif", full.names = TRUE)
-# f = fs[1]; plot(rast(f), main = basename(f))
+# f = fs[1]; plot(Raster(f), main = basename(f))
 write_fig({
   par(mfrow = c(3, 2))
   for(f in fs) {
-    plot(rast(f), main = basename(f))
+    plot(Raster(f), main = basename(f))
   }
 }, "Figure1_global_lambda_vcurve.pdf", 11, 7)
 ```
@@ -93,7 +93,7 @@ using Ipaper
 indir = realpath("/mnt/z/GitHub/jl-spatial/Whittaker2.jl/scripts/Project_Global_LAI_smoothing/OUTPUT/global_param_lambda_vcurve")
 fs = dir(indir, "tif")
 
-ra = rast(fs[1], lazy=true)
+ra = Raster(fs[1], lazy=true)
 x, y = st_dims(ra)
 
 l = (;xsize=length(x),ysize=length(y),num_bands=1)

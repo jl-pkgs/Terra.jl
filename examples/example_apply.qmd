@@ -18,7 +18,7 @@ ntime = length(dates)
 data = rand(length(lon), length(lat), ntime)
 dims = X(lon), Y(lat), Ti(dates)
 
-ra = rast(data, dims)
+ra = Raster(data, dims)
 
 probs = [0.05, 0.95]
 dims_new = Dim{:prob}(probs)
@@ -34,7 +34,7 @@ res = Ipaper.apply(data, 3; by=date_year(dates), fun=NanQuantile, combine=true, 
 obj_size(res)
 ```
 
-## 0.2. 版本2: rast
+## 0.2. 版本2: Raster
 > dimension信息终身携带
 
 ```{julia}
@@ -71,12 +71,12 @@ nc_info(f)
 ### 1.0.1. R语言
 
 ```{julia}
-r = rast("temp.nc", name=:pr)
+r = Raster("temp.nc", name=:pr)
 ```
 
 ```{r}
 library(terra)
 f = "temp.nc"
-rast(f)
+Raster(f)
 ```
 

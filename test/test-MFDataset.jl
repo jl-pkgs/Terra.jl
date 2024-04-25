@@ -9,8 +9,8 @@ dir_root = dirname(dirname(@__FILE__))
   b = bbox(70, 15, 140, 55)
   A = rand(10, 10, 5)
 
-  ra1 = rast(A, b; name=:x)
-  ra2 = rast(A, b; name=:y)
+  ra1 = Raster(A, b; name=:x)
+  ra2 = Raster(A, b; name=:y)
 
   @test_nowarn ras = brick(ra1, ra2)
 end
@@ -22,11 +22,11 @@ end
 @testset "tiff file" begin
   # b = bbox(70, 15, 140, 55)
   # A = rand(10, 10)
-  # ra = rast(A, b)
+  # ra = Raster(A, b)
   f = "$dir_root/data/test1.tif"
   # write(f, ra, force=true)
 
-  ra = rast(f)
+  ra = Raster(f)
   @test st_bbox(ra) == st_bbox(f)
 end
 ## 数据保存没有问题，可能是读取的时候出现了bug

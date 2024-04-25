@@ -10,12 +10,12 @@ using Rasters.Extents: extent
 
   # 2d array
   data = rand(70, 40)
-  ra2 = rast(data, b)
+  ra2 = Raster(data, b)
   @test st_bbox(ra2) == b
 
   # 3d array
   data = rand(70, 40, 10)
-  ra3 = rast(data, b)
+  ra3 = Raster(data, b)
   @test st_bbox(ra3) == b
 
 
@@ -26,7 +26,7 @@ using Rasters.Extents: extent
   b = bbox(70, 15, 140, 55)
   data = rand(70, 40, ntime)
   # obj_size(data)
-  ra = rast(data, b; date=dates)
+  ra = Raster(data, b; date=dates)
   @test collect(ra.dims[3]) == dates
 end
 
@@ -35,7 +35,7 @@ end
   A = rand(360, 180)
   b = bbox(-180, -90, 180, 90)
 
-  ra = rast(A, b)
+  ra = Raster(A, b)
   # write("a.tif", ra, force=true)
   # run(`gdalinfo a.tif`)
   ext = extent(ra)

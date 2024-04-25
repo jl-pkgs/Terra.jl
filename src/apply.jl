@@ -86,7 +86,7 @@ ntime = length(dates)
 data = rand(length(lon), length(lat), ntime)
 dims = X(lon), Y(lat), Ti(dates)
 
-ra = rast(data, dims)
+ra = Raster(data, dims)
 
 probs = [0.05, 0.95]
 dims_new = Dim{:prob}(probs)

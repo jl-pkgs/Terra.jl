@@ -8,6 +8,6 @@ using NetCDFTools
 include("test-MFDataset.jl")
 include("test-mapslices.jl")
 include("test-apply.jl")
-include("test-rast.jl")
+include("test-Raster.jl")
 include("test-gdal_polygonize.jl")
 include("test-st_mosaic.jl")

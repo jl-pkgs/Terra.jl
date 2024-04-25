@@ -14,7 +14,7 @@ const AG = ArchGDAL
 @reexport using Ipaper.sf
 @reexport using Rasters
 using Rasters: AbstractRaster
-rast = Raster
+Raster = Raster
 brick = RasterStack
 
 include("GDAL/GDAL.jl")
@@ -32,14 +32,14 @@ include("IO.jl")
 
 include("MFDataset/MFDataset.jl")
 
-# include("rast.jl")
+# include("Raster.jl")
 include("apply.jl")
 include("tools.jl")
 
 include("tools_Ipaper.jl")
 include("main_cdo.jl")
 
-export rast, brick, 
+export Raster, brick, 
   rast_apply, 
   set_names
 

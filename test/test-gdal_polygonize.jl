@@ -13,7 +13,7 @@ using ArchGDAL
   b = bbox([70, 15, 140, 55]...)
 
   A[1] = 0
-  ra = rast(A, b)
+  ra = Raster(A, b)
   # ra.A
 
   f = "test_nodata.tif"
@@ -51,7 +51,7 @@ end
 #   A = rand(Bool, 7 * n, 4 * n, 100)
 #   b = bbox([70, 15, 140, 55]...)
 
-#   ra = rast(A, b)
+#   ra = Raster(A, b)
 #   ra.A
 
 #   ## 1. without nodata
