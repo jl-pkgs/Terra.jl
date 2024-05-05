@@ -1,4 +1,4 @@
-using DiskArrays: GridChunks
+using NCDatasets.DiskArrays: GridChunks
 
 export GridChunks, chunksize
 export get_zarr, which_grid

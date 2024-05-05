@@ -6,7 +6,6 @@ version = "0.1.1"
 [deps]
 ArchGDAL = "c9ce4bd3-c3d5-55b8-8973-c0e20141b8c3"
 Dates = "ade2ca70-3891-5945-98fb-dc099432e06a"
-DiskArrays = "3c3547ce-8d99-4f5e-a174-61eb10b00ae3"
 DocStringExtensions = "ffbed154-4ef7-542d-bbb7-c09d3a79fcae"
 Ipaper = "e58298cb-69f7-4186-aecd-5834b6793426"
 JSON = "682c06a0-de6a-54ab-a142-c8b1cf79cde6"
@@ -32,7 +31,6 @@ TerraYAXArraysExt = "YAXArrays"
 
 [compat]
 ArchGDAL = "0.10"
-DiskArrays = "0.3, 0.4"
 DocStringExtensions = "0.9"
 Ipaper = "0.1.16, 0.1.17"
 NCDatasets = "0.12, 0.13, 0.14"
