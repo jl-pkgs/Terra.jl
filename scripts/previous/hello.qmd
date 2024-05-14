@@ -8,15 +8,4 @@ r[r .== 0.0f0] .= NaN32;
 ```{julia}
 using NaNStatistics
 mask = nanmean(r.data, dims=3)
-
-```
-
-```{julia}
-r[1:10, 1:10, :]
-```
-
-```{julia}
-using Plots
-
-plot(r)
 ```
