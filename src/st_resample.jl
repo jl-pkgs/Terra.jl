@@ -22,7 +22,7 @@ function st_resample(z::ZArray; fact=10, missingval=0)
 end
 
 function st_resample(zs::Vector{<:ZArray}; fact=10, missingval=0)
-  res = Vector{Raster}(undef, length(zs))
+  res = Vector{SpatRaster}(undef, length(zs))
   Threads.@threads for i = eachindex(zs)
     println("running $i")
     z = zs[i]

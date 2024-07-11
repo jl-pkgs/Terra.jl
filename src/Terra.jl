@@ -32,8 +32,6 @@ include("MFDataset/MFDataset.jl")
 include("apply.jl")
 include("tools_Ipaper.jl")
 
-export Raster, brick, 
-  rast_apply, 
-  set_names
+export rast_apply, set_names
 
 end # module
